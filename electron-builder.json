@@ -1,5 +1,5 @@
 {
-    "appId": "com.yangzhie.charm-helper", 
+    "appId": "com.yangzhie.floatsense", 
     "files": ["dist-electron", "dist-react"],
     "icon": "./icon.png",
     "extraResources": ["dist-electron/preload.cjs", "src/assets/**"],

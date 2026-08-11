@@ -1,5 +1,5 @@
 {
-  "name": "charm-sniper",
+  "name": "floatsense",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
-    "csgofloat": "^4.0.0",
     "dayjs": "^1.11.18",
     "dotenv": "^17.2.3",
     "eventemitter3": "^5.0.1",
@@ -34,7 +33,7 @@
     "@vitejs/plugin-react": "^5.0.0",
     "cross-env": "^10.1.0",
     "electron": "^38.2.2",
-    "electron-builder": "^26.0.12",
+    "electron-builder": "^26.15.3",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
