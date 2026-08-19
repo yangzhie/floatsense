@@ -1,8 +1,59 @@
-// Global types
-type PageCount = 1 | 10;
-type Limit = 10 | 20 | 30 | 50;
-type Sort = "lowest_price" | "highest_price" | "most_recent";
-type RERE = "buy_now" | "auction";
+// --- Global types ---
+
+// -------------------------
+// Fetching from skins API 
+// -------------------------
+type SkinData = {
+	name: string;
+	image: string;
+	rarity: {
+		color: string;
+	};
+	collections: {
+		name: string;
+		image: string;
+	}[];
+};
+
+// -------------------------
+// Fetching from CSFloat API 
+// -------------------------
+type DefIndex = 7 | 500 | 503 | 505 | 506 | 507 | 508 | 509 | 512 | 514 | 515 | 516 | 517 | 518 | 519 | 520 | 521 | 522 | 523 | 525 | 526;
+type Limit = 5 | 10 | 15;
+type BuyType = "buy_now" | "auction" | null;
+type Category = 0 | 1 | 2;
+
+type CSFloatObj = {
+	itemID: string;
+	timeMessage: string;
+	price: number;
+	charmIndex: number;
+	charmPattern: number;
+	icon: string;
+	name: string;
+	inspectLink: string;
+};
+
+type CSFloatItemInfo = {
+	keychain_index: number;
+	keychain_pattern: number;
+	icon_url: string;
+	market_hash_name: string;
+	inspect_link: string;
+};
+
+type CSFloatDataItem = {
+	id: string;
+	created_at: string;
+	price: number;
+	item: CSFloatItemInfo;
+};
+
+type CSFloatData = {
+	data: CSFloatDataItem[];
+};
+
+// --------------------------
 
 type ListingArray = ListingArrayItem[];
 
@@ -36,17 +87,6 @@ type ListingInfo = {
 	[key: string]: ListingInfoItem;
 };
 
-type CSFloatObj = {
-	itemID: string;
-	timeMessage: string;
-	price: number;
-	charmIndex: number;
-	charmPattern: number;
-	icon: string;
-	name: string;
-	inspectLink: string;
-};
-
 type CSFloatItemObject = {
 	iteminfo: {
 		keychains: CSFloatItemValues[];
@@ -55,25 +95,6 @@ type CSFloatItemObject = {
 
 type CSFloatItemValues = {
 	pattern: number;
-};
-
-type CSFloatData = {
-	data: CSFloatDataItem[];
-};
-
-type CSFloatDataItem = {
-	id: string;
-	created_at: string;
-	price: number;
-	item: CSFloatItemInfo;
-};
-
-type CSFloatItemInfo = {
-	keychain_index: number;
-	keychain_pattern: number;
-	icon_url: string;
-	market_hash_name: string;
-	inspect_link: string;
 };
 
 type Charms = {
@@ -95,17 +116,7 @@ type FetchCollectionsResult = {
 	collectionArr: CollectionsArray[];
 };
 
-type CollectionsFetch = {
-	name: string;
-	image: string;
-	rarity: {
-		color: string;
-	};
-	collections: {
-		name: string;
-		image: string;
-	}[];
-};
+
 
 type CharmsObj = {
 	name: string;

@@ -2,107 +2,29 @@
 import "dotenv/config";
 import { URLSearchParams } from "url";
 import dayjs from "dayjs";
+dayjs.extend(relativeTime);
 import relativeTime from "dayjs/plugin/relativeTime.js";
 
-// const csfloatAPIKey = process.env.csfloatAPIKey;
+const csfloatAPIKey = process.env.csfloatAPIKey;
 
-// // Fetch CSFloat data from CSFloat API
-// export const fetchFromCSFloat = async (
-// 	limit: Limit = 10,
-// 	sort: Sort = "lowest_price",
-// 	minFloat: number | null = null,
-// 	maxFloat: number | null = null,
-// 	paintSeed: number | null = null,
-// 	type: RERE = "buy_now",
-// 	marketHashName: string
-// ): Promise<CSFloatObj | null> => {
-// 	const csfloatURL: URL = new URL("https://csfloat.com/api/v1/listings");
-// 	const params: URLSearchParams = new URLSearchParams();
-
-// 	if (limit !== undefined) {
-// 		params.append("limit", limit.toString());
-// 	}
-// 	if (sort) {
-// 		params.append("sort_by", sort);
-// 	}
-
-// 	if (minFloat !== null) {
-// 		params.append("min_float", minFloat.toString());
-// 	}
-
-// 	if (maxFloat !== null) {
-// 		params.append("max_float", maxFloat.toString());
-// 	}
-
-// 	if (paintSeed != null) {
-// 		params.append("paint_seed", paintSeed.toString());
-// 	}
-// 	if (type !== undefined) {
-// 		params.append("type", type);
-// 	}
-// 	if (marketHashName !== undefined) {
-// 		params.append("market_hash_name", marketHashName);
-// 	}
-
-// 	csfloatURL.search = params.toString();
-
-// 	try {
-// 		const res: Response = await fetch(csfloatURL, {
-// 			headers: {
-// 				// Non-null assertion with "!"
-// 				Authorization: process.env.csfloatAPIKey!,
-// 			},
-// 		});
-
-// 		if (!res.ok) {
-// 			throw new Error(`Err: ${res.status}`);
-// 		}
-
-// 		let data: CSFloatData = await res.json();
-
-// 		// Extract data
-// 		const itemID: string = data["data"][0]["id"];
-
-// 		const timestamp: string = data["data"][0]["created_at"];
-// 		const postedTime = dayjs(timestamp);
-// 		dayjs.extend(relativeTime);
-// 		const timeMessage: string = postedTime.fromNow();
-
-// 		const price: number = data["data"][0]["price"] / 100;
-
-// 		const charmIndex: number = data["data"][0]["item"]["keychain_index"];
-// 		const charmPattern: number = data["data"][0]["item"]["keychain_pattern"];
-// 		const icon: string = data["data"][0]["item"]["icon_url"];
-// 		const name: string = data["data"][0]["item"]["market_hash_name"];
-// 		const inspectLink: string = data["data"][0]["item"]["inspect_link"];
-
-// 		const obj: CSFloatObj = {
-// 			itemID,
-// 			timeMessage,
-// 			price,
-// 			charmIndex,
-// 			charmPattern,
-// 			icon,
-// 			name,
-// 			inspectLink,
-// 		};
-
-// 		return obj;
-// 	} catch (err) {
-// 		console.error(err);
-// 		return null;
-// 	}
-// };
+export const reversedSideURL = (side, ID) => {
+	// Custom CSFloat URL for playside/backside screenshots of item
+	if (side === "playside") {
+		return `https://csfloat.pics/m/${ID}/playside.png?v=3`;
+	} else {
+		return `https://csfloat.pics/m/${ID}/backside.png?v=3`;
+	}
+}
 
 // Fetch placeholder data for case hardened skins
-export const fetchCollections = async (): Promise<FetchCollectionsResult | null> => {
+export const fetchCollections = async () => {
 	// API link for skin collections	
-	const skinsAPI: string = "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
+	const skinsAPI: URL = "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
 
 	try {
 		// Fetching
 		const res: Response = await fetch(skinsAPI);
-		const data: CollectionsFetch[] = await res.json();
+		const data = await res.json();
 
 		// Arrays for all knives and rifles
 		const knives = [];
@@ -161,8 +83,141 @@ export const fetchCollections = async (): Promise<FetchCollectionsResult | null>
 				}
 			}
 		}
+	
+		return { knives, rifles }
 	} catch (err) {
 		console.error(err);
 		return null;
 	}
 };
+
+// Fetch CSFloat data from CSFloat API
+export const fetchFromCSFloat = async (
+	defIndex: DefIndex,
+	paintSeed: number | null = null,
+	paintIndex: number = 44,
+	limit: Limit = 5,
+	type: BuyType = null,
+	category: Category = 0
+): Promise<CSFloatObj | null> => {
+	// Base (un-modified) URL
+	const csfloatURL: URL = new URL("https://csfloat.com/api/v1/listings");
+	
+	// Attach user-defined params to URL
+	const params: URLSearchParams = new URLSearchParams();
+	params.append("sort_by", "most_recent");
+	params.append("def_index", defIndex);
+	if (paintSeed !== null) {
+		params.append("paint_seed", paintSeed.toString());
+	} 
+	params.append("paint_index", paintIndex.toString());
+	params.append("limit", limit.toString());
+	if (type !== null) {
+		params.append("type", type);
+	}
+	params.append("category", category);
+	csfloatURL.search = params.toString();
+
+	// Try fetching item data
+	try {
+		// Fetch from user-defined modified URL
+		const res: Response = await fetch(csfloatURL, {
+			headers: {
+				Authorization: process.env.csfloatAPIKey,
+			},
+		});
+
+		// Case: no response
+		if (!res.ok) {
+			throw new Error(`Err: ${res.status}`);
+		}
+
+		// Convert response to JSON
+		const data = await res.json();
+
+		// Persistent arrays for data storage
+		const itemArr = [];
+
+		// Loop through the listings
+		for (let i = 0; i < data["data"].length; i++) {
+			// Temporary object to append to
+			const itemObj = {};
+
+			// Initial data to compare
+			const name: string = data["data"][i]["item"]["item_name"];
+			
+			// Generic item data
+			const buyType: string = data["data"][i]["type"];
+			const price: number = data["data"][i]["price"] / 100;
+			const float: string = data["data"][i]["item"]["float_value"];
+			const stattrack: string = data["data"][i]["item"]["is_stattrak"];
+			const wear: string = data["data"][i]["item"]["wear_name"];
+			const watchers: string = data["data"][i]["watchers"];
+
+			// Inspection data
+			const inspectionData = {};
+			const screenshotID = data["data"][i]["item"]["cs2_screenshot_id"];
+			const playside = reversedSideURL("playside", screenshotID);
+			const backside = reversedSideURL("backside", screenshotID);
+			const inspectLink = data["data"][i]["item"]["serialized_inspect"];
+			inspectionData["playsideLink"] = playside;
+			inspectionData["backsideLink"] = backside;
+			inspectionData["inspectLink"] = inspectLink;
+
+			// Blue Gem data
+			const blueGemData = {};
+			const backsideBlue: number = data["data"][i]["item"]["blue_gem"]["backside_blue"];
+			const backsidePurple: number = data["data"][i]["item"]["blue_gem"]["backside_purple"];
+			const backsideGold: number = data["data"][i]["item"]["blue_gem"]["backside_gold"];
+			const playsideBlue: number = data["data"][i]["item"]["blue_gem"]["playside_blue"];
+			const playsidePurple: number = data["data"][i]["item"]["blue_gem"]["playside_purple"];
+			const playsideGold: number = data["data"][i]["item"]["blue_gem"]["playside_gold"];
+			blueGemData["backsideBlue"] = backsideBlue;
+			blueGemData["backsidePurple"] = backsidePurple;
+			blueGemData["backsideGold"] = backsideGold;
+			blueGemData["playsideBlue"] = playsideBlue;
+			blueGemData["playsidePurple"] = playsidePurple;
+			blueGemData["playsideGold"] = playsideGold;
+
+			// Time data
+			const timestamp: string = data["data"][i]["created_at"];
+			const postedTime = dayjs(timestamp);
+			const timeMessage: string = postedTime.fromNow();
+				
+			// Seller data
+			const sellerData = {};
+			const sellerAvatar: string = data["data"][i]["seller"]["avatar"];
+			const sellerStatus: boolean = data["data"][i]["seller"]["online"];
+			const sellerName: string = data["data"][i]["seller"]["username"];
+			const sellerSteamID: string = data["data"][i]["seller"]["steam_id"];
+			sellerData["sellerAvatar"] = sellerAvatar;
+			sellerData["sellerStatus"] = sellerStatus;
+			sellerData["sellerName"] = sellerName;
+			sellerData["sellerSteamID"] = sellerSteamID;
+
+			// Append all data to temporary object
+			itemObj["name"] = name;
+			itemObj["buyType"] = buyType;
+			itemObj["price"] = price;
+			itemObj["float"] = float;
+			itemObj["stattrack"] = stattrack;
+			itemObj["wear"] = wear;
+			itemObj["watchers"] = watchers;
+			itemObj["inspectionData"] = inspectionData;
+			itemObj["timeMessage"] = timeMessage;
+			itemObj["blueGemData"] = blueGemData;
+			itemObj["sellerData"] = sellerData;
+
+			// Push temporary object into persistent array
+			itemArr.push(itemObj);
+		}	
+
+		return itemArr;
+	} catch (err) {
+		console.error(err);
+		return null;
+	}
+};
+
+const a = await fetchFromCSFloat(500, null, 44, 5, null, 0);
+console.dir(a, {depth : null});
