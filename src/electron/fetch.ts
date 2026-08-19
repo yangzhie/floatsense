@@ -94,62 +94,75 @@ import relativeTime from "dayjs/plugin/relativeTime.js";
 // 	}
 // };
 
-// Fetch collections data
+// Fetch placeholder data for case hardened skins
 export const fetchCollections = async (): Promise<FetchCollectionsResult | null> => {
-		const skinsAPI: string = "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
+	// API link for skin collections	
+	const skinsAPI: string = "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
 
-		try {
-			const res: Response = await fetch(skinsAPI);
-			const data: CollectionsFetch[] = await res.json();
-			const knives = [];
+	try {
+		// Fetching
+		const res: Response = await fetch(skinsAPI);
+		const data: CollectionsFetch[] = await res.json();
 
-			for(let i = 0; i < data.length; i++) {
-				const category = data[i]["category"]["name"];
-				const pattern = data[i]["pattern"]?.["name"];
-				
-				if ((category === "Knives") && (pattern === "Case Hardened")) {
-					const knife = {};
+		// Arrays for all knives and rifles
+		const knives = [];
+		const rifles = [];
+			
+		// Loop through the entire array of data
+		for(let i = 0; i < data.length; i++) {
+			// Fetch category and pattern to only get data for specific items
+			const category = data[i]["category"]["name"];
+			const pattern = data[i]["pattern"]?.["name"];
+			
+			// Conditional to check if item is a knife or rifle
+			if ((category === "Knives") && (pattern === "Case Hardened") || (category === "Rifles") && (pattern === "Case Hardened")) {
+				// Temporary item obj
+				const item = {};
 
-					const knifeName = data[i]["weapon"]["name"];
-					const minFloat = data[i]["min_float"];
-					const maxFloat = data[i]["max_float"];
-					const rarityColor = data[i]["rarity"]["color"];
+				// Item data
+				const name = data[i]["weapon"]["name"];
+				const minFloat = data[i]["min_float"];
+				const maxFloat = data[i]["max_float"];
+				const rarityColor = data[i]["rarity"]["color"];
 
-					const wears = [];
-					for (let j = 0; j < data[i]["wears"].length; j++) {
-						const w = data[i]["wears"][j]["name"];
-						wears.push(w);
-					}
+				// All possible wears of the item
+				const wears = [];
+				for (let j = 0; j < data[i]["wears"].length; j++) {
+					const w = data[i]["wears"][j]["name"];
+					wears.push(w);
+				}
 
-					const lootBoxes = [];
-					for (let k = 0; k < data[i]["crates"].length; k++) {
-						const lootBox = {};
+				// Item's possible lootboxes/crates
+				const lootBoxes = [];
+				for (let k = 0; k < data[i]["crates"].length; k++) {
+					const lootBox = {};
 
-						const lootBoxName = data[i]["crates"][k]["name"];
-						const lootBoxImage = data[i]["crates"][k]["image"];
+					const lootBoxName = data[i]["crates"][k]["name"];
+					const lootBoxImage = data[i]["crates"][k]["image"];
 
-						lootBox["lootBoxName"] = lootBoxName;
-						lootBox["lootBoxImage"] = lootBoxImage;
+					lootBox["lootBoxName"] = lootBoxName;
+					lootBox["lootBoxImage"] = lootBoxImage;
+					lootBoxes.push(lootBox);
+				}
 
-						lootBoxes.push(lootBox);
-					}
+				// Push item data into temporary item obj
+				item["name"] = name;
+				item["minFloat"] = minFloat;
+				item["maxFloat"] = maxFloat;
+				item["rarityColor"] = rarityColor;
+				item["wears"] = wears;
+				item["lootBoxes"] = lootBoxes;
 
-					knife["knifeName"] = knifeName;
-					knife["minFloat"] = minFloat;
-					knife["maxFloat"] = maxFloat;
-					knife["rarityColor"] = rarityColor;
-					knife["wears"] = wears;
-					knife["lootBoxes"] = lootBoxes;
-
-					knives.push(knife);
+				// Push temporary item obj into persistent parent array
+				if (category === "Knives") {
+					knives.push(item);
+				} else {
+					rifles.push(item);
 				}
 			}
-
-			console.dir(knives, {depth: null})
-		} catch (err) {
-			console.error(err);
-			return null;
 		}
+	} catch (err) {
+		console.error(err);
+		return null;
+	}
 };
-
-fetchCollections();
