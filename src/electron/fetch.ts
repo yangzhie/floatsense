@@ -1,4 +1,3 @@
-// @ts-nocheck
 import "dotenv/config";
 import { URLSearchParams } from "url";
 import dayjs from "dayjs";
@@ -7,73 +6,76 @@ import relativeTime from "dayjs/plugin/relativeTime.js";
 
 const csfloatAPIKey = process.env.csfloatAPIKey;
 
-export const reversedSideURL = (side, ID) => {
+/**
+ * Fetches screenshots of an item in the CSFloat DB,
+ * either playside or backside depending on request.
+ * 
+ * @param side playside of skin, or backside of skin.
+ * @param ID UUID of the skin in CSFloat DB.
+ * 
+ * @returns playside or backside PNG CSFloat link.
+ */
+export const reversedSideURL = (side: "playside" | "backside", ID: number): string => {
 	// Custom CSFloat URL for playside/backside screenshots of item
 	if (side === "playside") {
 		return `https://csfloat.pics/m/${ID}/playside.png?v=3`;
 	} else {
 		return `https://csfloat.pics/m/${ID}/backside.png?v=3`;
 	}
-}
+};
 
-// Fetch placeholder data for case hardened skins
-export const fetchCollections = async () => {
+/**
+ * Fetches CSGO-API skin DB and filters every case hardened knife and rifle,
+ * returning generic data for it.
+ * 
+ * @returns Object of knives or rifles arrays, or null if fetch fails.
+ */
+export const fetchCollections = async (): Promise<{ knives: CaseHardenedItem[], rifles: CaseHardenedItem[] } | null> => {
 	// API link for skin collections	
-	const skinsAPI: URL = "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
+	const skinsAPI: string = "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
 
 	try {
 		// Fetching
 		const res: Response = await fetch(skinsAPI);
-		const data = await res.json();
+		const data: ByMykelData[] = await res.json();
 
 		// Arrays for all knives and rifles
-		const knives = [];
-		const rifles = [];
+		const knives: CaseHardenedItem[] = [];
+		const rifles: CaseHardenedItem[] = [];
 			
 		// Loop through the entire array of data
 		for(let i = 0; i < data.length; i++) {
 			// Fetch category and pattern to only get data for specific items
-			const category = data[i]["category"]["name"];
-			const pattern = data[i]["pattern"]?.["name"];
+			const category: string = data[i]["category"]["name"];
+			const pattern: string | undefined = data[i]["pattern"]?.["name"];
 			
 			// Conditional to check if item is a knife or rifle
 			if ((category === "Knives") && (pattern === "Case Hardened") || (category === "Rifles") && (pattern === "Case Hardened")) {
-				// Temporary item obj
-				const item = {};
-
 				// Item data
-				const name = data[i]["weapon"]["name"];
-				const minFloat = data[i]["min_float"];
-				const maxFloat = data[i]["max_float"];
-				const rarityColor = data[i]["rarity"]["color"];
+				const name: string = data[i]["weapon"]["name"];
+				const minFloat: number = data[i]["min_float"];
+				const maxFloat: number = data[i]["max_float"];
+				const rarityColor: string = data[i]["rarity"]["color"];
 
 				// All possible wears of the item
-				const wears = [];
+				const wears: string[] = [];
 				for (let j = 0; j < data[i]["wears"].length; j++) {
 					const w = data[i]["wears"][j]["name"];
 					wears.push(w);
 				}
 
 				// Item's possible lootboxes/crates
-				const lootBoxes = [];
+				const lootBoxes: LootBox[] = [];
 				for (let k = 0; k < data[i]["crates"].length; k++) {
-					const lootBox = {};
+					const lootBoxName: string = data[i]["crates"][k]["name"];
+					const lootBoxImage: string = data[i]["crates"][k]["image"];
 
-					const lootBoxName = data[i]["crates"][k]["name"];
-					const lootBoxImage = data[i]["crates"][k]["image"];
-
-					lootBox["lootBoxName"] = lootBoxName;
-					lootBox["lootBoxImage"] = lootBoxImage;
+					const lootBox: LootBox = { lootBoxName, lootBoxImage };
 					lootBoxes.push(lootBox);
 				}
 
-				// Push item data into temporary item obj
-				item["name"] = name;
-				item["minFloat"] = minFloat;
-				item["maxFloat"] = maxFloat;
-				item["rarityColor"] = rarityColor;
-				item["wears"] = wears;
-				item["lootBoxes"] = lootBoxes;
+				// Temporary item obj and push item data
+				const item: CaseHardenedItem = { name, minFloat, maxFloat, rarityColor, wears, lootBoxes };
 
 				// Push temporary item obj into persistent parent array
 				if (category === "Knives") {
@@ -91,7 +93,19 @@ export const fetchCollections = async () => {
 	}
 };
 
-// Fetch CSFloat data from CSFloat API
+/**
+ * Fetches a relative number of listings of listed items on CSFloat
+ * according to user input. 
+ * 
+ * @param defIndex Type of weapon - relative to CSFloat.
+ * @param paintSeed Weapon paint seed (0 - 1000).
+ * @param paintIndex Weapon paint index (case hardened).
+ * @param limit Limit of fetching weapons per request.
+ * @param type Buying type of listing (auc/now).
+ * @param category Weapon separation normal, stattrack or souvenir.
+ * 
+ * @returns Array of objects, where each object is a CSFloat listing.
+ */
 export const fetchFromCSFloat = async (
 	defIndex: DefIndex,
 	paintSeed: number | null = null,
@@ -99,14 +113,14 @@ export const fetchFromCSFloat = async (
 	limit: Limit = 5,
 	type: BuyType = null,
 	category: Category = 0
-): Promise<CSFloatObj | null> => {
+): Promise<CSFloatItem[] | null> => {
 	// Base (un-modified) URL
 	const csfloatURL: URL = new URL("https://csfloat.com/api/v1/listings");
 	
 	// Attach user-defined params to URL
 	const params: URLSearchParams = new URLSearchParams();
 	params.append("sort_by", "most_recent");
-	params.append("def_index", defIndex);
+	params.append("def_index", defIndex.toString());
 	if (paintSeed !== null) {
 		params.append("paint_seed", paintSeed.toString());
 	} 
@@ -115,7 +129,7 @@ export const fetchFromCSFloat = async (
 	if (type !== null) {
 		params.append("type", type);
 	}
-	params.append("category", category);
+	params.append("category", category.toString());
 	csfloatURL.search = params.toString();
 
 	// Try fetching item data
@@ -123,7 +137,7 @@ export const fetchFromCSFloat = async (
 		// Fetch from user-defined modified URL
 		const res: Response = await fetch(csfloatURL, {
 			headers: {
-				Authorization: process.env.csfloatAPIKey,
+				Authorization: process.env.csfloatAPIKey!,
 			},
 		});
 
@@ -133,51 +147,37 @@ export const fetchFromCSFloat = async (
 		}
 
 		// Convert response to JSON
-		const data = await res.json();
+		const data: CSFloatResponse = await res.json();
 
 		// Persistent arrays for data storage
-		const itemArr = [];
+		const itemArr: CSFloatItem[] = [];
 
 		// Loop through the listings
 		for (let i = 0; i < data["data"].length; i++) {
-			// Temporary object to append to
-			const itemObj = {};
-
-			// Initial data to compare
-			const name: string = data["data"][i]["item"]["item_name"];
-			
 			// Generic item data
+			const name: string = data["data"][i]["item"]["item_name"];
 			const buyType: string = data["data"][i]["type"];
 			const price: number = data["data"][i]["price"] / 100;
-			const float: string = data["data"][i]["item"]["float_value"];
-			const stattrack: string = data["data"][i]["item"]["is_stattrak"];
+			const float: number = data["data"][i]["item"]["float_value"];
+			const stattrack: boolean = data["data"][i]["item"]["is_stattrak"];
 			const wear: string = data["data"][i]["item"]["wear_name"];
-			const watchers: string = data["data"][i]["watchers"];
+			const watchers: number = data["data"][i]["watchers"];
 
 			// Inspection data
-			const inspectionData = {};
-			const screenshotID = data["data"][i]["item"]["cs2_screenshot_id"];
-			const playside = reversedSideURL("playside", screenshotID);
-			const backside = reversedSideURL("backside", screenshotID);
-			const inspectLink = data["data"][i]["item"]["serialized_inspect"];
-			inspectionData["playsideLink"] = playside;
-			inspectionData["backsideLink"] = backside;
-			inspectionData["inspectLink"] = inspectLink;
+			const screenshotID: number = data["data"][i]["item"]["cs2_screenshot_id"];
+			const playsideLink: string = reversedSideURL("playside", screenshotID);
+			const backsideLink: string = reversedSideURL("backside", screenshotID);
+			const inspectLink: string = data["data"][i]["item"]["serialized_inspect"];
+			const inspectionData: InspectionData = { playsideLink, backsideLink, inspectLink };
 
 			// Blue Gem data
-			const blueGemData = {};
 			const backsideBlue: number = data["data"][i]["item"]["blue_gem"]["backside_blue"];
 			const backsidePurple: number = data["data"][i]["item"]["blue_gem"]["backside_purple"];
 			const backsideGold: number = data["data"][i]["item"]["blue_gem"]["backside_gold"];
 			const playsideBlue: number = data["data"][i]["item"]["blue_gem"]["playside_blue"];
 			const playsidePurple: number = data["data"][i]["item"]["blue_gem"]["playside_purple"];
 			const playsideGold: number = data["data"][i]["item"]["blue_gem"]["playside_gold"];
-			blueGemData["backsideBlue"] = backsideBlue;
-			blueGemData["backsidePurple"] = backsidePurple;
-			blueGemData["backsideGold"] = backsideGold;
-			blueGemData["playsideBlue"] = playsideBlue;
-			blueGemData["playsidePurple"] = playsidePurple;
-			blueGemData["playsideGold"] = playsideGold;
+			const blueGemData: BlueGemData = { backsideBlue, backsidePurple, backsideGold, playsideBlue, playsidePurple, playsideGold };
 
 			// Time data
 			const timestamp: string = data["data"][i]["created_at"];
@@ -185,28 +185,14 @@ export const fetchFromCSFloat = async (
 			const timeMessage: string = postedTime.fromNow();
 				
 			// Seller data
-			const sellerData = {};
 			const sellerAvatar: string = data["data"][i]["seller"]["avatar"];
 			const sellerStatus: boolean = data["data"][i]["seller"]["online"];
 			const sellerName: string = data["data"][i]["seller"]["username"];
 			const sellerSteamID: string = data["data"][i]["seller"]["steam_id"];
-			sellerData["sellerAvatar"] = sellerAvatar;
-			sellerData["sellerStatus"] = sellerStatus;
-			sellerData["sellerName"] = sellerName;
-			sellerData["sellerSteamID"] = sellerSteamID;
+			const sellerData: SellerData = { sellerAvatar, sellerStatus, sellerName, sellerSteamID };
 
-			// Append all data to temporary object
-			itemObj["name"] = name;
-			itemObj["buyType"] = buyType;
-			itemObj["price"] = price;
-			itemObj["float"] = float;
-			itemObj["stattrack"] = stattrack;
-			itemObj["wear"] = wear;
-			itemObj["watchers"] = watchers;
-			itemObj["inspectionData"] = inspectionData;
-			itemObj["timeMessage"] = timeMessage;
-			itemObj["blueGemData"] = blueGemData;
-			itemObj["sellerData"] = sellerData;
+			// Create temporary object and append
+			const itemObj = { name, buyType, price, float, stattrack, wear, watchers, inspectionData, timeMessage, blueGemData, sellerData };
 
 			// Push temporary object into persistent array
 			itemArr.push(itemObj);
@@ -219,5 +205,3 @@ export const fetchFromCSFloat = async (
 	}
 };
 
-const a = await fetchFromCSFloat(500, null, 44, 5, null, 0);
-console.dir(a, {depth : null});

@@ -3,16 +3,41 @@
 // -------------------------
 // Fetching from skins API 
 // -------------------------
-type SkinData = {
-	name: string;
-	image: string;
-	rarity: {
-		color: string;
-	};
-	collections: {
-		name: string;
-		image: string;
-	}[];
+
+// Raw response from ByMykel data
+type RawWear = { 
+	name: string 
+};
+
+type RawCrate = { 
+	name: string,
+	image: string 
+};
+
+type ByMykelData = {
+  category: { name: string },
+  pattern?: { name: string },
+  weapon: { name: string },
+  min_float: number,
+  max_float: number,
+  rarity: { color: string },
+  wears: RawWear[],
+  crates: RawCrate[]
+};
+
+// Flattened output
+type LootBox = {
+	lootBoxName: string,
+	lootBoxImage: string
+};
+
+type CaseHardenedItem = {
+  name: string;
+  minFloat: number;
+  maxFloat: number;
+  rarityColor: string;
+  wears: string[];
+  lootBoxes: LootBox[];
 };
 
 // -------------------------
@@ -21,110 +46,79 @@ type SkinData = {
 type DefIndex = 7 | 500 | 503 | 505 | 506 | 507 | 508 | 509 | 512 | 514 | 515 | 516 | 517 | 518 | 519 | 520 | 521 | 522 | 523 | 525 | 526;
 type Limit = 5 | 10 | 15;
 type BuyType = "buy_now" | "auction" | null;
-type Category = 0 | 1 | 2;
+type Category = 0 | 1 | 2; // any, normal, stattrack
 
-type CSFloatObj = {
-	itemID: string;
-	timeMessage: string;
-	price: number;
-	charmIndex: number;
-	charmPattern: number;
-	icon: string;
-	name: string;
-	inspectLink: string;
+// Raw response
+type CSFloatListing = {
+  type: string,
+  price: number,
+  created_at: string,
+  watchers: number,
+  item: {
+    item_name: string,
+    float_value: number,
+    is_stattrak: boolean,
+    wear_name: string,
+    cs2_screenshot_id: number,
+    serialized_inspect: string,
+    blue_gem: {
+      backside_blue: number,
+      backside_purple: number,
+      backside_gold: number,
+      playside_blue: number,
+      playside_purple: number,
+      playside_gold: number,
+    },
+  },
+  seller: { avatar: string; online: boolean; username: string; steam_id: string }
 };
 
-type CSFloatItemInfo = {
-	keychain_index: number;
-	keychain_pattern: number;
-	icon_url: string;
-	market_hash_name: string;
-	inspect_link: string;
+// Response envelope
+type CSFloatResponse = { 
+	data: CSFloatListing[],
+	cursor?: string 
 };
 
-type CSFloatDataItem = {
-	id: string;
-	created_at: string;
-	price: number;
-	item: CSFloatItemInfo;
+// Output shape this function builds per listing
+type CSFloatItem = {
+  name: string,
+  buyType: string,
+  price: number,
+  float: number,
+  stattrack: boolean,
+  wear: string,
+  watchers: number,
+  inspectionData: InspectionData,
+  timeMessage: string,
+  blueGemData: BlueGemData,
+  sellerData: SellerData
 };
 
-type CSFloatData = {
-	data: CSFloatDataItem[];
+// Inspection data (links)
+type InspectionData = {
+	playsideLink: string,
+	backsideLink: string,
+	inspectLink: string
 };
 
-// --------------------------
-
-type ListingArray = ListingArrayItem[];
-
-type ListingArrayItem = {
-	price: number;
-	inspectLink: string;
-	charmPattern?: number;
+// Blue gem data of item
+type BlueGemData = {
+	backsideBlue: number,
+	backsidePurple: number,
+	backsideGold: number,
+	playsideBlue: number,
+	playsidePurple: number,
+	playsideGold: number,
 };
 
-type SteamResponse = {
-	success: boolean;
-	listinginfo: ListingInfo;
+// Seller of item data
+type SellerData = {
+	sellerAvatar: string,
+	sellerStatus: boolean,
+	sellerName: string,
+	sellerSteamID: string
 };
 
-type Asset = {
-	id: string;
-	market_actions: MarketAction[];
-};
-
-type MarketAction = {
-	link: string;
-};
-
-type ListingInfoItem = {
-	listingid: string;
-	converted_price: number;
-	asset: Asset;
-};
-
-type ListingInfo = {
-	[key: string]: ListingInfoItem;
-};
-
-type CSFloatItemObject = {
-	iteminfo: {
-		keychains: CSFloatItemValues[];
-	};
-};
-
-type CSFloatItemValues = {
-	pattern: number;
-};
-
-type Charms = {
-	name: string;
-	image: string;
-	color: string;
-};
-
-type Collections = {
-	name: string;
-	image: string;
-};
-
-type FetchCollectionsResult = {
-	missingLinkArr: CharmsArray[];
-	smallArmsArr: CharmsArray[];
-	drBoomArr: CharmsArray[];
-	missingLinkCommunityArr: CharmsArray[];
-	collectionArr: CollectionsArray[];
-};
-
-
-
-type CharmsObj = {
-	name: string;
-	image: string;
-	color: string;
-};
-
-type CollectionsObj = {
-	collectionName: string;
-	collectionImage: string;
-};
+// -------------------------
+// ?
+// -------------------------
