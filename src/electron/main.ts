@@ -45,7 +45,7 @@ app.on("ready", () => {
 
 	// Obtain user variables and poll skin data
 	// Renderer fires data to Main and forgets
-	ipcMain.on("obtain-fetch-variables", (_event, pollRate, defIndex, paintSeed, paintIndex, limit, type, category) => {
+	ipcMain.on("obtain-fetch-variables-and-poll", (_event, pollRate: number, defIndex, paintSeed, paintIndex, limit, type, category) => {
 		// Clear any existing fetches to different skins
 		if (pollInterval) {
 			clearInterval(pollInterval);
@@ -81,7 +81,7 @@ app.on("ready", () => {
  * @param type Buying type of listing (auc/now).
  * @param category Weapon separation normal, stattrack or souvenir.
  * 
- * @returns Nothing - used only for fetching skins and then polling.
+ * @returns Single fetch-and-send, and then starts polling.
  */
 async function fetchAndSendCSFloatData(
 	mainWindow: BrowserWindow,

@@ -1,29 +1,23 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 
 // Preload script: bridges Main and Renderer 
 // Selects APIs to be exposed
 const API = {
-	// Renderer asks for static skins data, Main gives it
+	// Renderer asks for static skins data Main responds
 	getSkinsData: () => ipcRenderer.invoke("static-skins-data"),
 
-	// Updates Renderer to lastest CSFloat listings per user request
-	onCSFloatDataUpdate: (callback) =>
-		ipcRenderer.on("csfloat-data-update", (_event, data) => callback(data)),
-	
-	// Polls data from Main to Renderer 
-	CSFloatListingPolling: (charmName) =>
-		ipcRenderer.send("csfloat-listing-polling", charmName),
+	// Start the polling 
+	startPolling: (pollRate: number, defIndex: DefIndex, paintSeed: number | null, paintIndex: number = 44, limit: Limit, type: BuyType, category: Category) =>
+		ipcRenderer.send("obtain-fetch-variables-and-poll", pollRate, defIndex, paintSeed, paintIndex, limit, type, category),
 
-	//
-	invokeCSFloatData: (charmName) =>
-		ipcRenderer.invoke("csfloat-data", charmName),
-		
-	notify: (title, body) => ipcRenderer.send("notify", { title, body }),
+	// Updates the CSFloat data available to Main
+	onCSFloatDataUpdate: (callback: (data: CSFloatItem[] | null) => void) => {
+		const listener = (_event: IpcRendererEvent, data: CSFloatItem[] | null) => callback(data);
+		ipcRenderer.on("csfloat-data-update", listener);
+		return () => ipcRenderer.removeListener("csfloat-data-update", listener);
+	},
 	
-	onCSFloatDataUpdate: (callback) =>
-		ipcRenderer.on("csfloat-data-update", (_event, data) => callback(data)),
-	
-	removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel),
+	notify: (title: string, body: string) => ipcRenderer.send("notify", { title, body })
 };
 
 // Exposes the context bridge to Main's APIs
