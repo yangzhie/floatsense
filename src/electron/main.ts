@@ -2,32 +2,30 @@ import {
 	app,
 	BrowserWindow,
 	ipcMain,
-	webContents,
 	Notification,
 } from "electron";
 import path from "path";
 import { isDev, getPreloadPath } from "./utils.js";
-import {
-	fetchInspectLinkFromSteam,
-	fetchInspectDataFromAPI,
-	fetchCollections,
-} from "./fetch.js";
+import { fetchSkins, fetchFromCSFloat } from "./fetch.js";
 
-let pollInterval: number | null = null;
+let pollInterval: ReturnType<typeof setInterval> | null = null;
 
 app.on("ready", () => {
-	const mainWindow = new BrowserWindow({
-		title: "Charm Sniper",
+	// Main window's initial settings
+	const mainWindow: BrowserWindow = new BrowserWindow({
+		title: "floatsense",
 		width: 1100,
 		height: 700,
 		autoHideMenuBar: true,
 		webPreferences: {
 			preload: getPreloadPath(),
+			// Renderer cannot touch Node directly
 			contextIsolation: true,
 			nodeIntegration: false,
 		},
 	});
 
+	// Get dev or prod path
 	if (isDev()) {
 		mainWindow.loadURL("http://localhost:9999/");
 	} else {
@@ -38,29 +36,31 @@ app.on("ready", () => {
 		);
 	}
 
-	// --------- Static Collection Data ----------
-	ipcMain.handle("get-static-data", async () => {
-		const data = await fetchCollections();
+	// Handle for gathering skins data (static)
+	// Renderer asks for this handle - one req-res
+	ipcMain.handle("static-skins-data", async (): Promise<{ knives: CaseHardenedItem[], rifles: CaseHardenedItem[] } | null> => {
+		const data: { knives: CaseHardenedItem[], rifles: CaseHardenedItem[] } | null = await fetchSkins();
 		return data;
 	});
 
-	// ------------------------- Polling ------------------------------
-	ipcMain.on("start-charm-polling", async (_event, charmName) => {
-		await fetchAndSendCharmData(charmName, mainWindow);
+	// Obtain user variables and poll skin data
+	// Renderer fires data to Main and forgets
+	ipcMain.on("obtain-fetch-variables", (_event, pollRate, defIndex, paintSeed, paintIndex, limit, type, category) => {
+		// Clear any existing fetches to different skins
+		if (pollInterval) {
+			clearInterval(pollInterval);
+		}
 
-		if (pollInterval) clearInterval(pollInterval);
-
-		// @ts-ignore
-		// Poll every 20 seconds
+		// Start polling for a specific user-defined skin
 		pollInterval = setInterval(() => {
-			fetchAndSendCharmData(charmName, mainWindow);
-		}, 22000);
+			fetchAndSendCSFloatData(mainWindow, defIndex, paintSeed, paintIndex, limit, type, category);
+		}, pollRate);
 	});
 
-	// --- Listen for notification requests from renderer ---
+	// Listen for notifications from Renderer 
+	// Renderer fires data to Main and forgets
 	ipcMain.on("notify", (_event, { title, body }) => {
-		// @ts-ignore
-		const notification = new Notification({
+		const notification: Notification = new Notification({
 			title: title,
 			body: body,
 			silent: false,
@@ -68,46 +68,39 @@ app.on("ready", () => {
 
 		notification.show();
 	});
-
-	// --------- Fetch charm data on CSFloat ----------
-	// ipcMain.handle("csfloat-data", async (_event, charmName) => {
-	// 	setInterval(async () => {
-	// 		try {
-	// 			const data = await fetchFromCSFloat(
-	// 				50,
-	// 				"most_recent",
-	// 				null,
-	// 				null,
-	// 				null,
-	// 				"buy_now",
-	// 				charmName
-	// 			);
-
-	// 			mainWindow.webContents.send("csfloat-data-update", data);
-	// 		} catch (err) {
-	// 			console.error("CSFloat fetch error:", err);
-	// 		}
-	// 	}, 20000);
-	// });
 });
 
-async function fetchAndSendCharmData(
-	charmName: string,
-	mainWindow: BrowserWindow
-) {
+/**
+ * Main sends fetched data to the Renderer via .send.
+ * 
+ * @param mainWindow Main browser Electron window.
+ * @param defIndex Type of weapon - relative to CSFloat.
+ * @param paintSeed Weapon paint seed (0 - 1000).
+ * @param paintIndex Weapon paint index (case hardened).
+ * @param limit Limit of fetching weapons per request.
+ * @param type Buying type of listing (auc/now).
+ * @param category Weapon separation normal, stattrack or souvenir.
+ * 
+ * @returns Nothing - used only for fetching skins and then polling.
+ */
+async function fetchAndSendCSFloatData(
+	mainWindow: BrowserWindow,
+	defIndex: DefIndex,
+	paintSeed: number | null = null,
+	paintIndex: number = 44,
+	limit: Limit = 5,
+	type: BuyType = null,
+	category: Category = 0
+): Promise<void> {
 	try {
 		// Fetch data
-		const arr = await fetchInspectLinkFromSteam(charmName);
-		const data = await fetchInspectDataFromAPI(arr);
+		const data: CSFloatItem[] | null = await fetchFromCSFloat(defIndex, paintSeed, paintIndex, limit, type, category);
 
-		// Send update to renderer
-		mainWindow.webContents.send("charm-data-update", data);
-		// @ts-ignore
-		mainWindow.webContents.send("error", null);
+		// Send data to the Renderer
+		mainWindow.webContents.send("csfloat-data-update", data);
 	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
 		console.error("Polling error:", error);
-
-		// @ts-ignore
-		mainWindow.webContents.send("error", { message: error.message });
+		mainWindow.webContents.send("error", { message });
 	}
-}
+};

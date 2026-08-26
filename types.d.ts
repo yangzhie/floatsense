@@ -43,6 +43,7 @@ type CaseHardenedItem = {
 // -------------------------
 // Fetching from CSFloat API 
 // -------------------------
+
 type DefIndex = 7 | 500 | 503 | 505 | 506 | 507 | 508 | 509 | 512 | 514 | 515 | 516 | 517 | 518 | 519 | 520 | 521 | 522 | 523 | 525 | 526;
 type Limit = 5 | 10 | 15;
 type BuyType = "buy_now" | "auction" | null;

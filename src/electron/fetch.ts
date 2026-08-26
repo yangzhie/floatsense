@@ -1,28 +1,12 @@
 import "dotenv/config";
-import { URLSearchParams } from "url";
-import dayjs from "dayjs";
-dayjs.extend(relativeTime);
-import relativeTime from "dayjs/plugin/relativeTime.js";
-
 const csfloatAPIKey = process.env.csfloatAPIKey;
 
-/**
- * Fetches screenshots of an item in the CSFloat DB,
- * either playside or backside depending on request.
- * 
- * @param side playside of skin, or backside of skin.
- * @param ID UUID of the skin in CSFloat DB.
- * 
- * @returns playside or backside PNG CSFloat link.
- */
-export const reversedSideURL = (side: "playside" | "backside", ID: number): string => {
-	// Custom CSFloat URL for playside/backside screenshots of item
-	if (side === "playside") {
-		return `https://csfloat.pics/m/${ID}/playside.png?v=3`;
-	} else {
-		return `https://csfloat.pics/m/${ID}/backside.png?v=3`;
-	}
-};
+import { URLSearchParams } from "url";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime.js";
+dayjs.extend(relativeTime);
+
+import { reversedSideURL } from "./urls.ts";
 
 /**
  * Fetches CSGO-API skin DB and filters every case hardened knife and rifle,
@@ -30,8 +14,8 @@ export const reversedSideURL = (side: "playside" | "backside", ID: number): stri
  * 
  * @returns Object of knives or rifles arrays, or null if fetch fails.
  */
-export const fetchCollections = async (): Promise<{ knives: CaseHardenedItem[], rifles: CaseHardenedItem[] } | null> => {
-	// API link for skin collections	
+export const fetchSkins = async (): Promise<{ knives: CaseHardenedItem[], rifles: CaseHardenedItem[] } | null> => {
+	// API link for skins	
 	const skinsAPI: string = "https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json";
 
 	try {
@@ -204,4 +188,3 @@ export const fetchFromCSFloat = async (
 		return null;
 	}
 };
-

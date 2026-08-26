@@ -7,6 +7,8 @@
 		"module": "NodeNext", // Remove all types
 		"outDir": "../../dist-electron", // Output directory
 		"skipLibCheck": true, // Still build if not adherent
-		"types": ["../../types"] // Global types
+		"types": ["../../types"], // Global types
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true
 	}
 }

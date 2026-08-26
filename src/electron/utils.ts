@@ -1,11 +1,11 @@
 import path from "path";
 import { app } from "electron";
 
-export function isDev(): boolean {
+export const isDev = (): boolean => {
 	return process.env.NODE_ENV === "development";
-}
+};
 
-export function getPreloadPath(): string {
+export const getPreloadPath = (): string => {
 	const preloadPath = path.join(
 		app.getAppPath(), // Path of app
 		isDev() ? "." : "..", // If Dev, go to path
@@ -13,4 +13,4 @@ export function getPreloadPath(): string {
 	);
 
 	return preloadPath;
-}
+};
