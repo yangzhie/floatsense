@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useState } from "react";
 import {
 	BrowserRouter as Router,
@@ -6,86 +7,50 @@ import {
 	Navigate,
 } from "react-router-dom";
 
-import Title from "./utils/Title";
-import Charm from "./steam/charms/Charm";
-import Charms from "./steam/charms/Charms";
-import Collections from "./steam/collections/Collections";
-import Notifications from "./steam/notifications/Notifications";
+import Skins from "./components/skins/Skins";
 
 function App() {
-	const [missingLinkCollection, setMissingLinkCollection] = useState([]);
-	const [smallArmsCollection, setSmallArmsCollection] = useState([]);
-	const [missingLinkCommunityCollection, setDrBoomCollection] = useState([]);
-	const [drBoomCollection, setMissingLinkCommunityCollection] = useState([]);
-
-	const [charmsData, setCharmsData] = useState({});
+	// State to hold skin placeholders
+	const [skins, setSkins] = useState({});
 
 	// Runs only after first render, never again
 	useEffect(() => {
-		// @ts-ignore
-		window.api.getStaticData().then((data) => {
-			setMissingLinkCollection(data["collectionArr"][0]);
-			setSmallArmsCollection(data["collectionArr"][1]);
-			setDrBoomCollection(data["collectionArr"][2]);
-			setMissingLinkCommunityCollection(data["collectionArr"][3]);
-
-			setCharmsData({
-				missingLink: data["missingLinkArr"],
-				smallArms: data["smallArmsArr"],
-				missingLinkCommunity: data["missingLinkCommunityArr"],
-				drBoom: data["drBoomArr"],
-			});
+		// Get skin placeholders from static Electron API
+		window.api.getSkinsData().then((data) => {
+			setSkins({ "knives": data["knives"], "rifles": data["rifles"]});
 		});
 	}, []);
-
-	const collectionArr = [
-		missingLinkCollection,
-		smallArmsCollection,
-		missingLinkCommunityCollection,
-		drBoomCollection,
-	];
-
 	return (
 		<>
 			<Router>
 				<div className="h-screen box-border overflow-hidden">
-					<Title />
+					{/* <Title /> */}
 
 					<div className="flex h-full">
 						<div className="w-2/3 text-center">
 							<Routes>
-								{/* Route to set root to collections */}
+								{/* Route to set root to skins */}
 								<Route
 									path="/"
 									element={
-										<Navigate to="/collections" replace />
+										<Navigate to="/skins" replace />
 									}
 								/>
 
 								<Route
-									path="/collections"
+									path="/skins"
 									element={
-										<Collections
-											collectionArr={collectionArr}
+										<Skins
+											skins={skins}
 										/>
 									}
-								/>
-
-								<Route
-									path="/collections/:collectionCharm"
-									element={<Charms charmsData={charmsData} />}
-								/>
-
-								<Route
-									path="/collections/:collectionCharm/:charm"
-									element={<Charm />}
 								/>
 							</Routes>
 						</div>
 
-						<div className="w-1/3 border-l-1">
+						{/* <div className="w-1/3 border-l-1">
 							<Notifications />
-						</div>
+						</div> */}
 					</div>
 				</div>
 			</Router>

@@ -37,6 +37,7 @@ export const fetchSkins = async (): Promise<{ knives: CaseHardenedItem[], rifles
 			if ((category === "Knives") && (pattern === "Case Hardened") || (category === "Rifles") && (pattern === "Case Hardened")) {
 				// Item data
 				const name: string = data[i]["weapon"]["name"];
+				const image: string = data[i]["image"];
 				const minFloat: number = data[i]["min_float"];
 				const maxFloat: number = data[i]["max_float"];
 				const rarityColor: string = data[i]["rarity"]["color"];
@@ -59,7 +60,7 @@ export const fetchSkins = async (): Promise<{ knives: CaseHardenedItem[], rifles
 				}
 
 				// Temporary item obj and push item data
-				const item: CaseHardenedItem = { name, minFloat, maxFloat, rarityColor, wears, lootBoxes };
+				const item: CaseHardenedItem = { name, image, minFloat, maxFloat, rarityColor, wears, lootBoxes };
 
 				// Push temporary item obj into persistent parent array
 				if (category === "Knives") {

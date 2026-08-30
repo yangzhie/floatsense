@@ -18,6 +18,7 @@ type ByMykelData = {
   category: { name: string },
   pattern?: { name: string },
   weapon: { name: string },
+  image: string,
   min_float: number,
   max_float: number,
   rarity: { color: string },
@@ -32,12 +33,13 @@ type LootBox = {
 };
 
 type CaseHardenedItem = {
-  name: string;
-  minFloat: number;
-  maxFloat: number;
-  rarityColor: string;
-  wears: string[];
-  lootBoxes: LootBox[];
+  name: string,
+  image: string,
+  minFloat: number,
+  maxFloat: number,
+  rarityColor: string,
+  wears: string[],
+  lootBoxes: LootBox[]
 };
 
 // -------------------------
