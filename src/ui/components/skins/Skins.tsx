@@ -5,10 +5,8 @@ function Skins({ skins }) {
 	return (
 		<>
 			<div>
-				<p className="text-[50px] mt-15">Skins</p>
-
 				{/* Loop through the skin placeholders */}
-				<div className="flex flex-wrap justify-center h-full mt-10">
+				<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 px-8">
 					{
 						// Skins is an object passed through, need to map it regardless
 						Object.entries(skins).map(([category, items]) => (
@@ -17,18 +15,23 @@ function Skins({ skins }) {
 									<Link
 										key={ item["name"] }
 										to={`/skins/${encodeURIComponent(item["name"])}`}
-										className="flex flex-col items-center justify-center px-10 m-0"
+										className="group flex flex-col rounded-lg bg-neutral-800/90 p-4 items-center"
 									>
-										<div className="w-50 text-2xl">
+										<div className="transition-transform duration-300 hover:scale-110">
+											<img
+												src={ item["image"] }
+												width={ 200 }
+											/>
+										</div>
+
+										<div className="w-50 text-md mt-2">
 											{ item["name"] }
 										</div>
 
-										<div className="flex justify-center">
-											<img
-												src={ item["image"] }
-												width={ 175 }
-											/>
-										</div>
+										<div 
+											style={{ backgroundImage: `linear-gradient(to right, transparent, ${item.rarityColor}, transparent)` }}
+											className="w-full h-[4px] mt-2"
+										/>
 									</Link>
 								)
 							})

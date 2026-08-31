@@ -7,6 +7,7 @@ import {
 	Navigate,
 } from "react-router-dom";
 
+import Title from "./utils/Title";
 import Skins from "./components/skins/Skins";
 
 function App() {
@@ -17,17 +18,17 @@ function App() {
 	useEffect(() => {
 		// Get skin placeholders from static Electron API
 		window.api.getSkinsData().then((data) => {
-			setSkins({ "knives": data["knives"], "rifles": data["rifles"]});
+			setSkins({ "knives": data["knives"], "rifles": data["rifles"] });
 		});
 	}, []);
 	return (
 		<>
 			<Router>
-				<div className="h-screen box-border overflow-hidden">
-					{/* <Title /> */}
+				<div className="h-screen box-border">
+					<Title />
 
 					<div className="flex h-full">
-						<div className="w-2/3 text-center">
+						<div className="w-full text-center">
 							<Routes>
 								{/* Route to set root to skins */}
 								<Route
@@ -47,10 +48,6 @@ function App() {
 								/>
 							</Routes>
 						</div>
-
-						{/* <div className="w-1/3 border-l-1">
-							<Notifications />
-						</div> */}
 					</div>
 				</div>
 			</Router>
