@@ -14,7 +14,7 @@ function Skins({ skins }) {
 								return (
 									<Link
 										key={ item["name"] }
-										to={`/skins/${encodeURIComponent(item["name"])}`}
+										to={`/skins/${encodeURIComponent(item["defIndex"])}`}
 										className="group flex flex-col rounded-lg bg-neutral-800/90 p-4 items-center"
 									>
 										<div className="transition-transform duration-300 hover:scale-110">
