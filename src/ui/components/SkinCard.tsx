@@ -6,7 +6,7 @@ import { FaEye } from "react-icons/fa";
 function SkinCard() {
     return (
         <>
-            <div className="flex justify-center p-2 gap-2">
+            <div className="flex justify-center px-2 gap-2">
                 <div className="border-1 border-slate-700 bg-slate-700/20 p-2 rounded-sm">
                     <div className="flex justify-between">
                         <div>

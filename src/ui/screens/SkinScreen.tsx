@@ -1,5 +1,6 @@
 // @ts-nocheck
 import SkinCard from "../components/SkinCard";
+import FilterPanel from "../components/FilterPanel";
 
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { IoLogoGameControllerB } from "react-icons/io";
@@ -19,7 +20,7 @@ function SkinScreen() {
                 </div>
 
                 <div className="w-1/3">
-                    Filters
+                    <FilterPanel />
                 </div>
             </div>
         </>

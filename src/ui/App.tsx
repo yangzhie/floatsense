@@ -7,7 +7,7 @@ import {
 	Navigate,
 } from "react-router-dom";
 
-import Title from "./utils/Title";
+import Title from "./components/Title";
 import SkinsScreen from "./screens/SkinsScreen";
 import SkinScreen from "./screens/SkinScreen";
 
