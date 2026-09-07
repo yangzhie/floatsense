@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-function BackBtn() {
+function BackButton() {
 	const navigate = useNavigate();
 	return (
 		<div className="flex justify-start">
@@ -11,4 +11,4 @@ function BackBtn() {
 	);
 }
 
-export default BackBtn;
+export default BackButton;

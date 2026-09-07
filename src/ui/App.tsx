@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 
 import Title from "./utils/Title";
-import Skins from "./components/skins/Skins";
+import Skins from "./screens/SkinsScreen";
 
 function App() {
 	// State to hold skin placeholders
