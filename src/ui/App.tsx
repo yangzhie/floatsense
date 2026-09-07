@@ -8,7 +8,8 @@ import {
 } from "react-router-dom";
 
 import Title from "./utils/Title";
-import Skins from "./screens/SkinsScreen";
+import SkinsScreen from "./screens/SkinsScreen";
+import SkinScreen from "./screens/SkinScreen";
 
 function App() {
 	// State to hold skin placeholders
@@ -34,16 +35,23 @@ function App() {
 								<Route
 									path="/"
 									element={
-										<Navigate to="/skins" replace />
+										<Navigate to="/screens" replace />
 									}
 								/>
 
-								<Route
-									path="/skins"
+								{/* <Route
+									path="/screens"
 									element={
-										<Skins
+										<SkinsScreen
 											skins={skins}
 										/>
+									}
+								/> */}
+
+								<Route
+									path="/screens"
+									element={
+										<SkinScreen />
 									}
 								/>
 							</Routes>
