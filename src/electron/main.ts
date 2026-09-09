@@ -3,6 +3,7 @@ import {
 	BrowserWindow,
 	ipcMain,
 	Notification,
+	shell,
 } from "electron";
 import path from "path";
 import { isDev, getPreloadPath } from "./utils.js";
@@ -23,6 +24,12 @@ app.on("ready", () => {
 			contextIsolation: true,
 			nodeIntegration: false,
 		},
+	});
+
+	// Open user's browser window instead when clicking external links
+	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+		shell.openExternal(url);
+		return { action: "deny" };
 	});
 
 	// Get dev or prod path

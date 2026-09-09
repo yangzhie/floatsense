@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { convertBuyTypeToAcronym, convertWearToAcronym } from "../utils/helpers";
+import { convertBuyTypeToAcronym, convertWearToAcronym, idHelper, isSellerOnline, steamBuilder } from "../utils/helpers";
 
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { IoLogoGameControllerB } from "react-icons/io";
@@ -16,7 +16,7 @@ function SkinCard({ skin }) {
                             <div className="text-md">${ skin["price"] } { convertBuyTypeToAcronym(skin["buyType"]) }</div>
                             <div className="text-[10px]">{ skin["float"] } { convertWearToAcronym(skin["wear"]) }</div>
                         </div>
-                        <div className="text-[10px] flex items-end"> { skin["timeMessage"] } </div>
+                        <div className="text-[10px] flex items-end"> Listed: { skin["timeMessage"] } </div>
                     </div>
 
                     <div className="flex gap-1">
@@ -27,13 +27,17 @@ function SkinCard({ skin }) {
                         <div className="relative border-1 border-black">
                             <img src={`${ skin["inspectionData"]["backsideLink"] }`} alt="" />
                             <span className="absolute top-1 right-1 text-black text-sm">
-                                <FaExternalLinkAlt size={18} />
+                                <a href={ idHelper(skin["id"]) } target="_blank" rel="noopener noreferrer">
+                                    <FaExternalLinkAlt size={18} />
+                                </a>
                             </span>
                             <span className="absolute top-8 right-1 text-black text-sm">
-                                <IoLogoGameControllerB size={20} />
+                                <a href={ skin["inspectionData"]["inspectLink"] } target="_blank" rel="noopener noreferrer">
+                                    <IoLogoGameControllerB size={20} />
+                                </a>
                             </span>
                             <span className="absolute bottom-1 right-1 text-black text-sm">
-                                <span className="text-[10px]">12</span>
+                                <span className="text-[10px]">{ skin["watchers"] }</span>
                                 <FaEye size={16} />
                             </span>
                         </div>
@@ -45,25 +49,29 @@ function SkinCard({ skin }) {
                                 <div className="text-md">Backside</div>
                                 <div className="text-blue-400">{ skin["blueGemData"]["backsideBlue"] }%</div>
                                 <div className="text-purple-400">{ skin["blueGemData"]["backsidePurple"] }%</div>
-                                <div className="text-yellow-400">{ skin["blueGemData"]["backsideYellow"] }%</div>
+                                <div className="text-yellow-400">{ skin["blueGemData"]["backsideGold"] }%</div>
                             </div>
                                 
                             <div>
                                 <div className="text-md">Playside</div>
                                 <div className="text-blue-400">{ skin["blueGemData"]["playsideBlue"] }%</div>
                                 <div className="text-purple-400">{ skin["blueGemData"]["playsidePurple"] }%</div>
-                                <div className="text-yellow-400">{ skin["blueGemData"]["playsideYellow"] }%</div>
+                                <div className="text-yellow-400">{ skin["blueGemData"]["playsideGold"] }%</div>
                             </div>
                         </div>
 
                         <div className="w-1/2 flex p-2">
                             <div className="w-1/2">
-                                <img src={`${ skin["sellerData"]["sellerAvatar"] }`} alt="" />
+                                <a href={`${ steamBuilder(skin["sellerData"]["sellerSteamID"]) }`} target="_blank" rel="noopener noreferrer">
+                                    <img src={`${ skin["sellerData"]["sellerAvatar"] }`} alt="" />
+                                </a>
                             </div>
 
                             <div className="w-5/6">
                                 <div className="text-sm text-start ml-1">{ skin["sellerData"]["sellerName"] }</div>
-                                <div className="text-green-600 text-sm text-start ml-1">{ skin["sellerData"]["sellerStatus"] }</div>
+                                <div className={`text-sm text-start ml-1 ${ skin["sellerData"]["sellerStatus"] ? "text-green-500" : "text-red-500" }`}>
+                                    { isSellerOnline(skin["sellerData"]["sellerStatus"]) }
+                                </div>
                             </div>
                         </div>
                     </div>

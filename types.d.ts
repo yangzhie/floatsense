@@ -54,6 +54,7 @@ type Category = 0 | 1 | 2; // any, normal, stattrack
 
 // Raw response
 type CSFloatListing = {
+  id: number,
   type: string,
   price: number,
   created_at: string,
@@ -85,6 +86,7 @@ type CSFloatResponse = {
 
 // Output shape this function builds per listing
 type CSFloatItem = {
+  id: number,
   name: string,
   buyType: string,
   price: number,

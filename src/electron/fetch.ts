@@ -141,6 +141,7 @@ export const fetchFromCSFloat = async (
 		// Loop through the listings
 		for (let i = 0; i < data["data"].length; i++) {
 			// Generic item data
+			const id: number = data["data"][i]["id"];
 			const name: string = data["data"][i]["item"]["item_name"];
 			const buyType: string = data["data"][i]["type"];
 			const price: number = data["data"][i]["price"] / 100;
@@ -178,7 +179,7 @@ export const fetchFromCSFloat = async (
 			const sellerData: SellerData = { sellerAvatar, sellerStatus, sellerName, sellerSteamID };
 
 			// Create temporary object and append
-			const itemObj = { name, buyType, price, float, stattrack, wear, watchers, inspectionData, timeMessage, blueGemData, sellerData };
+			const itemObj = { id, name, buyType, price, float, stattrack, wear, watchers, inspectionData, timeMessage, blueGemData, sellerData };
 
 			// Push temporary object into persistent array
 			itemArr.push(itemObj);
