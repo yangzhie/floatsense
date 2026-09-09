@@ -43,6 +43,12 @@ app.on("ready", () => {
 		return data;
 	});
 
+	// Returns a skin's data only once - no polling
+	ipcMain.handle("fetch-csfloat-once", async (_event, defIndex, paintSeed, paintIndex, limit, type, category) => {
+		const data = await fetchFromCSFloat(defIndex, paintSeed, paintIndex, limit, type, category)
+		return data;
+	});
+
 	// Obtain user variables and poll skin data
 	// Renderer fires data to Main and forgets
 	ipcMain.on("obtain-fetch-variables-and-poll", (_event, pollRate: number, defIndex, paintSeed, paintIndex, limit, type, category) => {

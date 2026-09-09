@@ -35,21 +35,21 @@ function App() {
 								<Route
 									path="/"
 									element={
-										<Navigate to="/screens" replace />
+										<Navigate to="/screens/skins-screen" replace />
 									}
 								/>
 
-								{/* <Route
-									path="/screens"
+								<Route
+									path="/screens/skins-screen"
 									element={
 										<SkinsScreen
 											skins={skins}
 										/>
 									}
-								/> */}
+								/>
 
 								<Route
-									path="/screens"
+									path="/screens/skin-screen/:defIndex"
 									element={
 										<SkinScreen />
 									}

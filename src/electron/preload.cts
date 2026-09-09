@@ -6,6 +6,10 @@ const API = {
 	// Renderer asks for static skins data Main responds
 	getSkinsData: () => ipcRenderer.invoke("static-skins-data"),
 
+	// Fetch directly from CSFloat API just once and send to Renderer
+	fetchOnce: (defIndex: DefIndex, paintSeed: number | null, paintIndex: number, limit: Limit, type: BuyType, category: Category) =>
+		ipcRenderer.invoke("fetch-csfloat-once", defIndex, paintSeed, paintIndex, limit, type, category),
+
 	// Start the polling 
 	startPolling: (pollRate: number, defIndex: DefIndex, paintSeed: number | null, paintIndex: number = 44, limit: Limit, type: BuyType, category: Category) =>
 		ipcRenderer.send("obtain-fetch-variables-and-poll", pollRate, defIndex, paintSeed, paintIndex, limit, type, category),

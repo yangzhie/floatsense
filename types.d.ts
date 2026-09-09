@@ -17,7 +17,7 @@ type RawCrate = {
 type ByMykelData = {
   category: { name: string },
   pattern?: { name: string },
-  weapon: { name: string },
+  weapon: { name: string, weapon_id: number },
   image: string,
   min_float: number,
   max_float: number,
@@ -38,6 +38,7 @@ type CaseHardenedItem = {
   minFloat: number,
   maxFloat: number,
   rarityColor: string,
+  defIndex: number,
   wears: string[],
   lootBoxes: LootBox[]
 };

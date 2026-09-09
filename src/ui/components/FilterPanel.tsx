@@ -40,19 +40,19 @@ function FilterPanel() {
                     <div className="text-slate-300">Buy Type</div>
                     <div className="mt-2 flex justify-center gap-3">
                         <button
-                        onClick={() => setBuyType("buy_now")}
-                        className={`text-sm p-1 rounded-sm w-24 border border-transparent hover:border-neutral-400 transition-colors ${
-                            buyType === "buy_now" ? "bg-[#4a5454]" : "bg-[#373f3f]"
-                        }`}
+                            onClick={() => setBuyType("buy_now")}
+                            className={`text-sm p-1 rounded-sm w-24 border border-transparent hover:border-neutral-400 transition-colors ${
+                                buyType === "buy_now" ? "bg-[#4a5454]" : "bg-[#373f3f]"}`
+                            }
                         >
                             Buy Now [B]
                         </button>
 
                         <button
-                        onClick={() => setBuyType("auction")}
-                        className={`text-sm p-1 rounded-sm w-24 border border-transparent hover:border-neutral-400 transition-colors 
-                            ${ buyType === "auction" ? "bg-[#4a5454]" : "bg-[#373f3f]"}`
-                        }
+                            onClick={() => setBuyType("auction")}
+                            className={`text-sm p-1 rounded-sm w-24 border border-transparent hover:border-neutral-400 transition-colors 
+                                ${ buyType === "auction" ? "bg-[#4a5454]" : "bg-[#373f3f]"}`
+                            }
                         >
                             Auction [A]
                         </button>
