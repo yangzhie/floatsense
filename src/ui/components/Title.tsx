@@ -1,11 +1,11 @@
 function Title() {
 	return (
 		<>
-			<div className="flex justify-center mb-5">
-				<div className="w-full flex justify-end">
+			<div className="flex justify-between">
+				<div className="w-full flex justify-start">
 					<img 
 						src="src/ui/assets/floatsense_logo_mark.png" 
-						className="w-100"
+						className="w-80"
 					/>
 				</div>
 

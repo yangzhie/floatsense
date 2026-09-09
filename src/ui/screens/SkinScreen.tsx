@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { IoLogoGameControllerB } from "react-icons/io";
 import { FaEye } from "react-icons/fa";
+import BackButton from "../components/BackButton";
 
 function SkinScreen() {
     // Obtain the parameter from main route mapping in App.tsx
@@ -20,17 +21,23 @@ function SkinScreen() {
 
     return (
         <>
-            <div className="flex">
-                <div className="flex justify-start flex-wrap w-2/3">
-                    {
-                        listings?.map((item) => (
-                            <SkinCard skin={ item } />
-                        ))
-                    }
+            <div className="">
+                <div>
+                    <BackButton />
                 </div>
 
-                <div className="w-1/3">
-                    <FilterPanel />
+                <div className="flex">
+                    <div className="flex justify-start flex-wrap w-2/3">
+                        {
+                            listings?.map((item) => (
+                                <SkinCard skin={ item } />
+                            ))
+                        }
+                    </div>
+
+                    <div className="w-1/3">
+                        <FilterPanel />
+                    </div>
                 </div>
             </div>
         </>
