@@ -1,14 +1,30 @@
 //@ts-nocheck
 import { useState } from "react";
+import toast from 'react-hot-toast';
 
 import { IoIosNotifications } from "react-icons/io";
-import { TIERS } from "../utils/paintseeds";
+import { BLUE_GEM_SEEDS, TIERS } from "../utils/paintseeds";
 
-function FilterPanel() {
-    const [filterTier, setFilterTier] = useState(false)
-    const [buyType, setBuyType] = useState(false)
-    const [category, setCategory] = useState(false)
-    const [limit, setLimit] = useState(false)
+function FilterPanel({ onBrowse }) {
+    const [filterTier, setFilterTier] = useState(null);
+    const [buyType, setBuyType] = useState(null);
+    const [category, setCategory] = useState(null);
+    const [limit, setLimit] = useState(null);
+
+    const browse = () => {
+        if (!filterTier) {
+            toast.error("No tier set.");
+        } else if (!buyType) {
+            toast.error("No buy type set.");
+        } else if (category === null) {
+            toast.error("No category set.");
+        } else if (!limit) {
+            toast.error("No limit set.");
+        } else {
+            // Why destructure?
+            onBrowse({ filterTier, buyType, category, limit });
+        }
+    };
 
     return (
         <>
@@ -131,7 +147,7 @@ function FilterPanel() {
 
                 <div className="mt-6 flex justify-center gap-3">
                     <button>Notify</button>
-                    <button>Browse</button>
+                    <button onClick={ browse }>Browse</button>
                 </div>
             </div>
         </>

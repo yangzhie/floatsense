@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
+import { Toaster } from "react-hot-toast";
 import {
 	BrowserRouter as Router,
 	Routes,
@@ -57,6 +58,13 @@ function App() {
 							</Routes>
 						</div>
 					</div>
+
+					<Toaster
+						position="top-right"
+						toastOptions={{
+							style: { background: "#33415533", color: "white" },
+						}}
+					/>
 				</div>
 			</Router>
 		</>

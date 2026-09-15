@@ -94,7 +94,7 @@ export const fetchSkins = async (): Promise<{ knives: CaseHardenedItem[], rifles
  */
 export const fetchFromCSFloat = async (
 	defIndex: DefIndex,
-	paintSeed: number | null = null,
+	paintSeed: number[] | null = null,
 	paintIndex: number = 44,
 	limit: Limit = 5,
 	type: BuyType = null,
@@ -108,7 +108,10 @@ export const fetchFromCSFloat = async (
 	params.append("sort_by", "most_recent");
 	params.append("def_index", defIndex.toString());
 	if (paintSeed !== null) {
-		params.append("paint_seed", paintSeed.toString());
+		// Constantly apply all seed params in paint seed array
+		for (let i = 0; i < paintSeed.length; i++) {
+			params.append("paint_seed", paintSeed[i].toString());
+		}
 	} 
 	params.append("paint_index", paintIndex.toString());
 	params.append("limit", limit.toString());

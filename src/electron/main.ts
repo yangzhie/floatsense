@@ -15,7 +15,7 @@ app.on("ready", () => {
 	// Main window's initial settings
 	const mainWindow: BrowserWindow = new BrowserWindow({
 		title: "floatsense",
-		width: 1100,
+		width: 1240,
 		height: 700,
 		autoHideMenuBar: true,
 		webPreferences: {
@@ -99,7 +99,7 @@ app.on("ready", () => {
 async function fetchAndSendCSFloatData(
 	mainWindow: BrowserWindow,
 	defIndex: DefIndex,
-	paintSeed: number | null = null,
+	paintSeed: number[] | null = null,
 	paintIndex: number = 44,
 	limit: Limit = 5,
 	type: BuyType = null,

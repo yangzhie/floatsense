@@ -69,3 +69,33 @@ export const seedMatcher = (defIndex: number, paintSeed: number) => {
     
 	return "Unranked";
 };
+
+export const getSeeds = (defIndex: number, tier: string): number[] | null => {
+    // Loop through the object's values
+	for (const weapon of Object.values(BLUE_GEM_SEEDS)) {
+        // Skip if weapon does not match
+		if (weapon.defIndex !== defIndex) continue;
+
+        // Seeds of the weapon
+		const seeds = weapon.seeds;
+        
+        // Tier doesn't exist for the weapon
+        // @ts-ignore
+        if (!seeds[tier]) return null;
+
+        // Tier keys
+		const tierKeys = Object.keys(TIERS);
+		const selectedIndex = tierKeys.indexOf(tier);
+
+		// Everything ranked above the selected tier
+		const higher = new Set<number>();
+		for (let i = 0; i < selectedIndex; i++) {
+            // @ts-ignore
+			seeds[tierKeys[i]]?.forEach((s) => higher.add(s));
+		}
+
+        // @ts-ignore
+		return [...(seeds[tier] ?? [])].filter((s) => !higher.has(s));
+    }
+	return null;
+};
