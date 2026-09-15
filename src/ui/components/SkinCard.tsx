@@ -1,4 +1,8 @@
 // @ts-nocheck
+import { useState } from "react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+
+import ZoomControls from "./ZoomControls";
 import { convertBuyTypeToAcronym, convertWearToAcronym, idHelper, isSellerOnline, seedMatcher, steamBuilder } from "../utils/helpers";
 
 import steamQuestion from "../assets/steam-question.png";
@@ -7,6 +11,9 @@ import { IoLogoGameControllerB } from "react-icons/io";
 import { FaEye } from "react-icons/fa";
 
 function SkinCard({ skin }) {
+    // Zooming into play/backside images
+    const [zoomed, setZoomed] = useState();
+
     // Generate tier color and label
     const tier = seedMatcher(skin["defIndex"], skin["paintSeed"]);
 
@@ -29,7 +36,28 @@ function SkinCard({ skin }) {
                     <div className="flex flex-col gap-1 mt-2">
                         {/* Logo/link over image = relative*/}
                         <div className="relative flex gap-2">
-                            <img src={`${ skin["inspectionData"]["playsideLink"] }`} alt="" />
+                            <img 
+                                src={`${ skin["inspectionData"]["playsideLink"] }`}
+                                onClick={() => setZoomed(skin["inspectionData"]["playsideLink"])}
+                                className="cursor-pointer"
+                            />
+
+                            { zoomed && (
+                                <div
+                                    onClick={() => setZoomed(null)}
+                                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/85"
+                                >
+                                    <div onClick={(event) => event.stopPropagation()} className="relative">
+                                    <TransformWrapper initialScale={1}>
+                                        <ZoomControls />
+                                        <TransformComponent>
+                                        <img src={zoomed} className="max-w-[90vw] max-h-[90vh] object-contain" />
+                                        </TransformComponent>
+                                    </TransformWrapper>
+                                    </div>
+                                </div>
+                            )}
+
                             <span className="absolute top-1 right-1 text-black text-sm">
                                 <a href={ idHelper(skin["id"]) } target="_blank" rel="noopener noreferrer">
                                     <FaExternalLinkAlt size={18} color="white" />
@@ -43,7 +71,12 @@ function SkinCard({ skin }) {
                             </span>
                         </div>
                         <div className="relative">
-                            <img src={`${ skin["inspectionData"]["backsideLink"] }`} alt="" />
+                            <img 
+                                src={`${ skin["inspectionData"]["backsideLink"] }`}
+                                onClick={() => setZoomed(skin["inspectionData"]["backsideLink"])}
+                                className="cursor-pointer"
+                            />
+
                             <span className="absolute bottom-1 right-1 text-black text-sm flex gap-1 items-center">
                                 <FaEye size={16} color="white" />
                                 <span className="text-[10px] text-white">{ skin["watchers"] }</span>
