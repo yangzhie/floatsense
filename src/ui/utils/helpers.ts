@@ -99,3 +99,24 @@ export const getSeeds = (defIndex: number, tier: string): number[] | null => {
     }
 	return null;
 };
+
+const categoryToString = (isStattrack: boolean) => {
+    if (isStattrack === false) {
+        return "normal";
+    } else {
+        return "stattrack";
+    }
+}
+
+const cleanItemName = (itemName: string) => {
+    const cleanedName = itemName.split("|")[0].replace("★", "").trim().replace(/ /g, "+");
+    return cleanedName;
+}
+
+export const csBlueGemClashGG = (skinName: string, skinSeed: number, isStattrack: boolean) => {
+    const itemName = cleanItemName(skinName);
+    const categoryNumber = categoryToString(isStattrack);
+    
+    const URL = `https://stash.clash.gg/search-pattern?skin=${itemName}&pattern=${skinSeed}&type=${categoryNumber}`
+    return URL;
+}

@@ -3,12 +3,11 @@ import { useState } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 import ZoomControls from "./ZoomControls";
-import { convertBuyTypeToAcronym, convertWearToAcronym, idHelper, isSellerOnline, seedMatcher, steamBuilder } from "../utils/helpers";
+import { convertBuyTypeToAcronym, convertWearToAcronym, csBlueGemClashGG, idHelper, isSellerOnline, seedMatcher, steamBuilder } from "../utils/helpers";
 
 import steamQuestion from "../assets/steam-question.png";
-import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaExternalLinkAlt, FaEye, FaGem } from "react-icons/fa";
 import { IoLogoGameControllerB } from "react-icons/io";
-import { FaEye } from "react-icons/fa";
 
 function SkinCard({ skin }) {
     // Zooming into play/backside images
@@ -67,6 +66,12 @@ function SkinCard({ skin }) {
                             <span className="absolute top-8 right-1 text-black text-sm">
                                 <a href={ skin["inspectionData"]["inspectLink"] } target="_blank" rel="noopener noreferrer">
                                     <IoLogoGameControllerB size={20} color="white" />
+                                </a>
+                            </span>
+
+                            <span className="absolute top-15 right-1 text-black text-sm">
+                                <a href={ csBlueGemClashGG(skin["name"], skin["paintSeed"], skin["stattrack"]) } target="_blank" rel="noopener noreferrer">
+                                    <FaGem size={18} color="white" />
                                 </a>
                             </span>
                         </div>
