@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { convertBuyTypeToAcronym, convertWearToAcronym, idHelper, isSellerOnline, steamBuilder } from "../utils/helpers";
+import { convertBuyTypeToAcronym, convertWearToAcronym, idHelper, isSellerOnline, seedMatcher, steamBuilder } from "../utils/helpers";
 
 import steamQuestion from "../assets/steam-question.png";
 import { FaExternalLinkAlt } from "react-icons/fa";
@@ -7,6 +7,8 @@ import { IoLogoGameControllerB } from "react-icons/io";
 import { FaEye } from "react-icons/fa";
 
 function SkinCard({ skin }) {
+    // Generate tier color and label
+    const tier = seedMatcher(skin["defIndex"], skin["paintSeed"]);
 
     return (
         <>
@@ -17,7 +19,11 @@ function SkinCard({ skin }) {
                             <div className="text-md">${ skin["price"] } { convertBuyTypeToAcronym(skin["buyType"]) }</div>
                             <div className="text-[10px]">{ skin["float"]?.toFixed(6) } { convertWearToAcronym(skin["wear"]) }</div>
                         </div>
-                        <div className="text-[10px] flex items-end"> Listed: { skin["timeMessage"] } </div>
+                        
+                        <div>
+                            <div className="text-sm text-end" style={{ color: tier.color }}>{ tier.label || "Unranked"  }</div>
+                            <div className="text-[10px] flex items-end"> Listed: { skin["timeMessage"] } </div>
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-1 mt-2">

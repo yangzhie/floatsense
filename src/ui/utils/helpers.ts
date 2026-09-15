@@ -1,3 +1,5 @@
+import { BLUE_GEM_SEEDS, TIERS } from "./paintseeds";
+
 export const convertBuyTypeToAcronym = (buyType: string): string => {
     if (buyType === "buy_now") {
         return "[B]";
@@ -37,3 +39,33 @@ export const steamBuilder = (steamID: number): string => {
     const steamLink: string = `https://steamcommunity.com/profiles/${steamID}`;
     return steamLink;
 }
+
+export const seedMatcher = (defIndex: number, paintSeed: number) => {
+	// Loop through all obj values
+	for (const weapon of Object.values(BLUE_GEM_SEEDS)) {
+		// Exit if def indicies do not match
+		if (weapon.defIndex !== defIndex) continue;
+
+		// Search and match tiers
+		for (const tier of Object.keys(TIERS)) {
+            // @ts-ignore
+			if (weapon.seeds[tier]?.includes(paintSeed)) {
+                if (String(tier) === "max_1") {
+                    return TIERS.max_1;
+                } else if (String(tier) === "max_2") {
+                    return TIERS.max_2;
+                } else if (String(tier) === "rank_1") {
+                    return TIERS.rank_1;
+                } else if (String(tier) === "rank_2") {
+                    return TIERS.rank_2;
+                } else if (String(tier) === "rank_3") {
+                    return TIERS.rank_3;
+                } else if (String(tier) === "rank_4") {
+                    return TIERS.rank_4;
+                }
+			}
+		}
+	}
+    
+	return "Unranked";
+};

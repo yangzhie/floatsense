@@ -60,6 +60,8 @@ type CSFloatListing = {
   created_at: string,
   watchers: number,
   item: {
+    def_index: number,
+    paint_seed: number,
     item_name: string,
     float_value: number,
     is_stattrak: boolean,
@@ -90,6 +92,8 @@ type CSFloatItem = {
   name: string,
   buyType: string,
   price: number,
+  defIndex: number,
+  paintSeed: number,
   float: number,
   stattrack: boolean,
   wear: string,

@@ -145,6 +145,8 @@ export const fetchFromCSFloat = async (
 			const name: string = data["data"][i]["item"]["item_name"];
 			const buyType: string = data["data"][i]["type"];
 			const price: number = data["data"][i]["price"] / 100;
+			const defIndex: number = data["data"][i]["item"]["def_index"]; 
+			const paintSeed: number = data["data"][i]["item"]["paint_seed"]; 
 			const float: number = data["data"][i]["item"]["float_value"];
 			const stattrack: boolean = data["data"][i]["item"]["is_stattrak"];
 			const wear: string = data["data"][i]["item"]["wear_name"];
@@ -179,7 +181,7 @@ export const fetchFromCSFloat = async (
 			const sellerData: SellerData = { sellerAvatar, sellerStatus, sellerName, sellerSteamID };
 
 			// Create temporary object and append
-			const itemObj = { id, name, buyType, price, float, stattrack, wear, watchers, inspectionData, timeMessage, blueGemData, sellerData };
+			const itemObj = { id, name, buyType, price, defIndex, paintSeed, float, stattrack, wear, watchers, inspectionData, timeMessage, blueGemData, sellerData };
 
 			// Push temporary object into persistent array
 			itemArr.push(itemObj);

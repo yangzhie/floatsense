@@ -5,13 +5,10 @@ export const TIERS = {
 	rank_2: { label: "Tier 2", color: "#A855F7" },
 	rank_3: { label: "Tier 3", color: "#3B82F6" },
 	rank_4: { label: "Tier 4", color: "#9CA3AF" },
-} as const;
-
-export type Tier = keyof typeof TIERS;
+};
 
 export const BLUE_GEM_SEEDS = {
 	ak: {
-		label: "AK-47",
 		defIndex: 7,
 		seeds: {
 			max_1: [661],
@@ -36,7 +33,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	karambit: {
-		label: "Karambit",
 		defIndex: 507,
 		seeds: {
 			max_1: [387],
@@ -66,7 +62,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	karambit_backside: {
-		label: "Karambit (backside)",
 		defIndex: 507,
 		seeds: {
 			max_1: [417],
@@ -95,7 +90,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	m9_bayonet: {
-		label: "M9 Bayonet",
 		defIndex: 508,
 		seeds: {
 			max_1: [601],
@@ -127,7 +121,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	butterfly: {
-		label: "Butterfly Knife",
 		defIndex: 515,
 		seeds: {
 			max_1: [182, 494],
@@ -161,7 +154,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	skeleton: {
-		label: "Skeleton Knife",
 		defIndex: 525,
 		seeds: {
 			max_1: [403],
@@ -188,7 +180,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	skeleton_backside: {
-		label: "Skeleton Knife (backside)",
 		defIndex: 525,
 		seeds: {
 			max_1: [468],
@@ -223,7 +214,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	talon: {
-		label: "Talon Knife",
 		defIndex: 523,
 		seeds: {
 			max_1: [55],
@@ -254,7 +244,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	talon_backside: {
-		label: "Talon Knife (backside)",
 		defIndex: 523,
 		seeds: {
 			max_1: [387],
@@ -291,7 +280,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	bayonet: {
-		label: "Bayonet",
 		defIndex: 500,
 		seeds: {
 			max_1: [555],
@@ -329,7 +317,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	flip: {
-		label: "Flip Knife",
 		defIndex: 505,
 		seeds: {
 			max_1: [670],
@@ -359,7 +346,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	nomad: {
-		label: "Nomad Knife",
 		defIndex: 521,
 		seeds: {
 			max_1: [577],
@@ -392,7 +378,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	stiletto: {
-		label: "Stiletto Knife",
 		defIndex: 522,
 		seeds: {
 			max_1: [182],
@@ -426,7 +411,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	ursus: {
-		label: "Ursus Knife",
 		defIndex: 519,
 		seeds: {
 			max_1: [494],
@@ -456,7 +440,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	huntsman: {
-		label: "Huntsman Knife",
 		defIndex: 509,
 		seeds: {
 			max_1: [618],
@@ -485,7 +468,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	survival: {
-		label: "Survival Knife",
 		defIndex: 517,
 		seeds: {
 			max_1: [403],
@@ -514,7 +496,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	kukri: {
-		label: "Kukri Knife",
 		defIndex: 526,
 		seeds: {
 			max_1: [494],
@@ -554,7 +535,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	paracord: {
-		label: "Paracord Knife",
 		defIndex: 518,
 		seeds: {
 			max_1: [403],
@@ -583,7 +563,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	bowie: {
-		label: "Bowie Knife",
 		defIndex: 514,
 		seeds: {
 			max_1: [182],
@@ -613,7 +592,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	falchion: {
-		label: "Falchion Knife",
 		defIndex: 512,
 		seeds: {
 			max_1: [494],
@@ -648,7 +626,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	gut: {
-		label: "Gut Knife",
 		defIndex: 506,
 		seeds: {
 			max_1: [567],
@@ -673,7 +650,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	shadow_daggers: {
-		label: "Shadow Daggers",
 		defIndex: 516,
 		seeds: {
 			max_1: [56],
@@ -699,7 +675,6 @@ export const BLUE_GEM_SEEDS = {
 		},
 	},
 	navaja: {
-		label: "Navaja Knife",
 		defIndex: 520,
 		seeds: {
 			max_1: [398],
@@ -728,4 +703,4 @@ export const BLUE_GEM_SEEDS = {
 			],
 		},
 	},
-} as const;
+};
