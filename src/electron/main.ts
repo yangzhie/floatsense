@@ -17,6 +17,7 @@ app.on("ready", () => {
 		title: "floatsense",
 		width: 1240,
 		height: 700,
+		resizable: false,
 		autoHideMenuBar: true,
 		webPreferences: {
 			preload: getPreloadPath(),

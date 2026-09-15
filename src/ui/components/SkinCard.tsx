@@ -28,7 +28,7 @@ function SkinCard({ skin }) {
                         </div>
                         
                         <div>
-                            <div className="text-sm text-end" style={{ color: tier.color }}>{ tier.label || "Unranked"  }</div>
+                            <div className="text-sm text-end" style={{ color: tier.color }}>{ skin["paintSeed"] }</div>
                             <div className="text-[10px] flex items-end"> Listed: { skin["timeMessage"] } </div>
                         </div>
                     </div>
