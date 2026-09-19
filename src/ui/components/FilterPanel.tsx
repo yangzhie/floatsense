@@ -6,14 +6,15 @@ import { IoIosNotifications } from "react-icons/io";
 import { BLUE_GEM_SEEDS, TIERS } from "../utils/paintseeds";
 
 function FilterPanel({ onBrowse }) {
-    const [filterTier, setFilterTier] = useState(null);
+    const [filterTier, setFilterTier] = useState(null); // tier or Any
+    const [specificSeed, setSpecificSeed] = useState("");
     const [buyType, setBuyType] = useState(null);
     const [category, setCategory] = useState(null);
     const [limit, setLimit] = useState(null);
 
     const browse = () => {
-        if (!filterTier) {
-            toast.error("No tier set.");
+        if (!filterTier && !specificSeed) {
+            toast.error("No tier/seed set.");
         } else if (!buyType) {
             toast.error("No buy type set.");
         } else if (category === null) {
@@ -22,8 +23,14 @@ function FilterPanel({ onBrowse }) {
             toast.error("No limit set.");
         } else {
             // Why destructure?
-            onBrowse({ filterTier, buyType, category, limit });
+            onBrowse({ filterTier, specificSeed, buyType, category, limit });
         }
+    };
+
+    const enterSeed = (value) => {
+        if (value !== "" && (!/^\d+$/.test(value) || Number(value) > 1000)) return;
+        setSpecificSeed(value);
+        setFilterTier(null);
     };
 
     return (
@@ -36,7 +43,7 @@ function FilterPanel({ onBrowse }) {
                     <div className="flex gap-4 justify-center mt-2">
                         <div>
                             <button
-                                onClick={() => setFilterTier("Any")}
+                                onClick={() => { setFilterTier("Any"); setSpecificSeed(""); }}
                                 className={`text-[12px] px-1 py-1 rounded-[3px] border-2 border-transparent hover:border-neutral-400 transition-colors 
                                     ${ filterTier === "Any" ? "bg-[#4a5454]" : "bg-[#373f3f]"}`
                                 }
@@ -49,7 +56,7 @@ function FilterPanel({ onBrowse }) {
                             Object.entries(TIERS).map(([tier, info]) => (
                                 <div key={ tier }>
                                     <button
-                                        onClick={() => setFilterTier(tier)}
+                                        onClick={() => { setFilterTier(tier); setSpecificSeed(""); }}
                                         style={{ color: info.color }}
                                         className={`text-[12px] px-1 py-1 rounded-[3px] border-2 border-transparent hover:border-neutral-400 transition-colors 
                                             ${ filterTier === tier ? "bg-[#4a5454]" : "bg-[#373f3f]"}`
@@ -60,6 +67,15 @@ function FilterPanel({ onBrowse }) {
                                 </div>
                             ))
                         }
+                    </div>
+
+                    <div className="flex justify-center items-center gap-2">
+                        <div className="text-[12px] mt-2">Specific Seed:</div>
+                        <input
+                            value={ specificSeed }
+                            onChange={ (event) => enterSeed(event.target.value) }
+                            className="text-[12px] mt-2 w-10 px-1 py-1 border-slate-500 rounded-[3px] border-1 hover:border-neutral-400 transition-colors"
+                        />                              
                     </div>
                 </div>
 
