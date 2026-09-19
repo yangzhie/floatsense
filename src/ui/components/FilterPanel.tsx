@@ -34,6 +34,17 @@ function FilterPanel({ onBrowse }) {
                 <div className="mt-4">
                     <div className="text-slate-300">Paint Seed</div>
                     <div className="flex gap-4 justify-center mt-2">
+                        <div>
+                            <button
+                                onClick={() => setFilterTier("Any")}
+                                className={`text-[12px] px-1 py-1 rounded-[3px] border-2 border-transparent hover:border-neutral-400 transition-colors 
+                                    ${ filterTier === "Any" ? "bg-[#4a5454]" : "bg-[#373f3f]"}`
+                                }
+                            >
+                                Any
+                            </button>                                
+                        </div>
+
                         {
                             Object.entries(TIERS).map(([tier, info]) => (
                                 <div key={ tier }>

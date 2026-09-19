@@ -47,12 +47,12 @@ function SkinCard({ skin }) {
                                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/85"
                                 >
                                     <div onClick={(event) => event.stopPropagation()} className="relative">
-                                    <TransformWrapper initialScale={1}>
-                                        <ZoomControls />
-                                        <TransformComponent>
-                                        <img src={zoomed} className="max-w-[90vw] max-h-[90vh] object-contain" />
-                                        </TransformComponent>
-                                    </TransformWrapper>
+                                        <TransformWrapper initialScale={1}>
+                                            <ZoomControls />
+                                            <TransformComponent>
+                                                <img src={zoomed} className="max-w-[90vw] max-h-[90vh] object-contain" />
+                                            </TransformComponent>
+                                        </TransformWrapper>
                                     </div>
                                 </div>
                             )}

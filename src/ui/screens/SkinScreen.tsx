@@ -32,15 +32,20 @@ function SkinScreen() {
     // Browse call once to get specific skin info
     const handleBrowse = ({ filterTier, buyType, category, limit }) => {
         // Get seeds of that tier
-        const seeds = getSeeds(Number(defIndex), filterTier);
-
-        // Check if the tier even exists for the weapon
-        if (seeds === null) {
-            toast.error("No listings of that tier exist!");
-            return;
+        if (filterTier !== "Any") {
+            const seeds = getSeeds(Number(defIndex), filterTier);
+    
+            // Check if the tier even exists for the weapon
+            if (seeds === null) {
+                toast.error("No listings of that tier exist!");
+                return;
+            }
+    
+            window.api.fetchOnce(Number(defIndex), seeds, 44, limit, buyType, category).then(setListings);
+        } else {
+            // Else, get any listing not based on seeds
+            window.api.fetchOnce(Number(defIndex), null, 44, limit, buyType, category).then(setListings);
         }
-
-        window.api.fetchOnce(Number(defIndex), seeds, 44, limit, buyType, category).then(setListings);
     }; 
 
     // Null check
